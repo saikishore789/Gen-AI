@@ -450,7 +450,7 @@ Generate medical report drafts
 
 ---
 
-# Interview-Friendly Summary
+
 
 > **Artificial Intelligence (AI)** is the broad field of building systems that perform tasks requiring human intelligence. **Machine Learning (ML)** is a subset of AI where systems learn patterns from data instead of relying on explicit rules. **Deep Learning (DL)** is a subset of ML that uses multi-layer neural networks to solve complex problems like image and speech recognition. **Generative AI (GenAI)** is a subset of deep learning focused on creating new content such as text, images, audio, video, or code. Tools like ChatGPT use large deep learning models trained on vast datasets to generate human-like responses.
 
