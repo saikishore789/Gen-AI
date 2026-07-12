@@ -14,6 +14,7 @@ st.set_page_config(
 )
 st.title("💬 Generative AI Chatbot")
 
+
 # initiate chat history
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
@@ -43,4 +44,4 @@ if user_prompt:
     st.session_state.chat_history.append({"role": "assistant", "content": assistant_response})
 
     with st.chat_message("assistant"):
-        st.markdown(assistant_response)
+        st.markdown(assistant_response) 
