@@ -1,7 +1,8 @@
-from langchain_community.document_loaders import DirectoryLoader, UnstructuredFileLoader
-from langchain_text_splitters import CharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_chroma import Chroma
+from langchain.document_loaders import DirectoryLoader
+from langchain.document_loaders.unstructured import UnstructuredFileLoader
+from langchain.text_splitters import CharacterTextSplitter
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import Chroma
 
 import nltk
 
