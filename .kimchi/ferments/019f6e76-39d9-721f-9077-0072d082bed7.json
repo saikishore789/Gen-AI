@@ -1,0 +1,17 @@
+{
+  "id": "019f6e76-39d9-721f-9077-0072d082bed7",
+  "name": "Rewrite login flow",
+  "description": "Rewrite login flow",
+  "status": "draft",
+  "worktree": {
+    "path": "/mnt/c/Practice/Gen-AI",
+    "branch": "master",
+    "commit": "337de230295c2088df33a6a0de74c89befcf3801"
+  },
+  "scoping": {},
+  "phases": [],
+  "decisions": [],
+  "memories": [],
+  "createdAt": "2026-07-17T05:04:29.657Z",
+  "updatedAt": "2026-07-17T05:04:29.657Z"
+}

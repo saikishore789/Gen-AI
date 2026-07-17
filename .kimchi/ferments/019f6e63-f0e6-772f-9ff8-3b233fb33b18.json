@@ -1,0 +1,315 @@
+{
+  "id": "019f6e63-f0e6-772f-9ff8-3b233fb33b18",
+  "name": "Kubernetes Troubleshooting Agent",
+  "description": "create a kubernetes troubleshooting agent",
+  "status": "paused",
+  "worktree": {
+    "path": "/mnt/c/Practice/Gen-AI",
+    "branch": "master",
+    "commit": "337de230295c2088df33a6a0de74c89befcf3801"
+  },
+  "scoping": {
+    "goal": {
+      "answer": "Build a Python CLI Kubernetes troubleshooting agent that uses LangChain to call a user-specified LLM, auto-gathers read-only cluster state via kubectl, and returns a Markdown diagnosis with suggested commands for pod, resource, networking, storage, and node issues.",
+      "confirmedAt": "2026-07-17T05:01:45.047Z"
+    },
+    "criteria": {
+      "answer": "A new directory `k8s_troubleshooting_agent/` exists with a runnable CLI entry point.\nThe CLI requires `--provider` and `--model` and fails gracefully if either is missing.\nThe agent auto-runs read-only kubectl commands for each supported scenario and feeds output to the LLM.\nThe agent outputs a Markdown report with facts, diagnosis, suggested commands, and a safety note.\nUnit tests mock kubectl and verify each scenario triggers the expected commands and structured prompts.\nREADME documents installation, provider env vars, examples, and the read-only/suggest-only model.\nDependencies are declared in `pyproject.toml` including langchain, langchain-ollama, langchain-openai, and pytest.",
+      "confirmedAt": "2026-07-17T05:01:45.047Z"
+    },
+    "constraints": {
+      "answer": "No destructive kubectl commands may be executed or suggested without explicit safety framing., Provider and model must be explicitly provided by the user; no baked-in default LLM., The agent must work against the user's current kubeconfig context and not require cluster-side installation., Keep dependencies minimal: LangChain provider packages, subprocess kubectl, pytest.",
+      "confirmedAt": "2026-07-17T05:01:45.047Z"
+    },
+    "phases": {
+      "answer": "Bootstrap project scaffold, Implement read-only kubectl layer, Integrate LangChain LLM providers, Build diagnosis agent and CLI output, Documentation and test coverage",
+      "confirmedAt": "2026-07-17T05:01:45.047Z"
+    },
+    "assumptions": {
+      "answer": "User has a working `kubectl` binary and valid kubeconfig in the runtime environment.; Existing project convention is Python 3.10+ and a dedicated subdirectory per project (e.g., `chatgpt_like_app/`, `RAG/`).; Ollama and OpenAI are the initial LangChain providers; Anthropic can be added later without structural change.; The agent is read-only/suggest-only by design; remediation is out of scope for this ferment.",
+      "confirmedAt": "2026-07-17T05:01:45.047Z"
+    }
+  },
+  "phases": [
+    {
+      "id": "phase-1",
+      "index": 1,
+      "name": "Bootstrap project scaffold",
+      "goal": "Create the package layout, dependency file, and entry point so the project is installable.",
+      "description": "",
+      "parallel": false,
+      "status": "active",
+      "steps": [
+        {
+          "id": "step-1",
+          "index": 1,
+          "description": "Create `k8s_troubleshooting_agent/` directory with `__init__.py`, `cli.py`, `agent.py`, `kubectl.py`, `scenarios.py`, `prompts.py`, and `llm.py`.",
+          "status": "verified",
+          "verification": {
+            "command": "test -d k8s_troubleshooting_agent && test -f k8s_troubleshooting_agent/cli.py",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false,
+          "startedAt": "2026-07-17T05:01:51.298Z",
+          "completedAt": "2026-07-17T05:02:46.222Z",
+          "result": {
+            "success": true,
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": "",
+            "completedAt": "2026-07-17T05:02:46.222Z"
+          }
+        },
+        {
+          "id": "step-2",
+          "index": 2,
+          "description": "Add `pyproject.toml` declaring package metadata, console script entry point, and dependencies (langchain, langchain-ollama, langchain-openai, pytest).",
+          "status": "pending",
+          "verification": {
+            "command": "test -f pyproject.toml && grep -q 'k8s-troubleshoot' pyproject.toml",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false,
+          "startedAt": "2026-07-17T05:02:49.232Z"
+        },
+        {
+          "id": "step-3",
+          "index": 3,
+          "description": "Add initial `README.md` with project overview and installation instructions.",
+          "status": "pending",
+          "verification": {
+            "command": "test -f k8s_troubleshooting_agent/README.md",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        }
+      ],
+      "startedAt": "2026-07-17T05:01:47.903Z"
+    },
+    {
+      "id": "phase-2",
+      "index": 2,
+      "name": "Implement read-only kubectl layer",
+      "goal": "Build a safe kubectl runner and per-scenario command maps that gather cluster facts.",
+      "description": "",
+      "parallel": false,
+      "status": "planned",
+      "steps": [
+        {
+          "id": "step-1",
+          "index": 1,
+          "description": "Implement `kubectl.py` with a whitelist of read-only commands and a function `run(command, args)` that returns stdout/stderr.",
+          "status": "pending",
+          "verification": {
+            "command": "python -c 'from k8s_troubleshooting_agent.kubectl import run; print(run(\"get\", [\"nodes\"]))'",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        },
+        {
+          "id": "step-2",
+          "index": 2,
+          "description": "Implement `scenarios.py` mapping each scenario (pods, resources, networking, pvc, nodes) to the kubectl commands needed.",
+          "status": "pending",
+          "verification": {
+            "command": "python -c 'from k8s_troubleshooting_agent.scenarios import COMMANDS; assert \"pods\" in COMMANDS'",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        },
+        {
+          "id": "step-3",
+          "index": 3,
+          "description": "Add unit tests in `tests/test_kubectl.py` verifying the whitelist rejects destructive verbs and scenario commands are generated.",
+          "status": "pending",
+          "verification": {
+            "command": "pytest k8s_troubleshooting_agent/tests/test_kubectl.py",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        }
+      ]
+    },
+    {
+      "id": "phase-3",
+      "index": 3,
+      "name": "Integrate LangChain LLM providers",
+      "goal": "Support user-specified Ollama and OpenAI providers through a factory function.",
+      "description": "",
+      "parallel": false,
+      "status": "planned",
+      "steps": [
+        {
+          "id": "step-1",
+          "index": 1,
+          "description": "Implement `llm.py` with `build_llm(provider, model)` returning a LangChain chat model, validating required env vars.",
+          "status": "pending",
+          "verification": {
+            "command": "python -c 'from k8s_troubleshooting_agent.llm import build_llm; build_llm(\"ollama\", \"llama3.2:1b\")'",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        },
+        {
+          "id": "step-2",
+          "index": 2,
+          "description": "Wire `--provider` and `--model` as required CLI arguments in `cli.py`.",
+          "status": "pending",
+          "verification": {
+            "command": "python -m k8s_troubleshooting_agent.cli --help | grep -q -- --provider",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        },
+        {
+          "id": "step-3",
+          "index": 3,
+          "description": "Add `tests/test_llm.py` to verify factory behavior for supported providers and missing-provider errors.",
+          "status": "pending",
+          "verification": {
+            "command": "pytest k8s_troubleshooting_agent/tests/test_llm.py",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        }
+      ]
+    },
+    {
+      "id": "phase-4",
+      "index": 4,
+      "name": "Build diagnosis agent and CLI output",
+      "goal": "Assemble cluster facts, prompt the LLM, and render a Markdown diagnosis with suggested commands.",
+      "description": "",
+      "parallel": false,
+      "status": "planned",
+      "steps": [
+        {
+          "id": "step-1",
+          "index": 1,
+          "description": "Implement `prompts.py` with a system prompt that enforces read-only, suggest-only behavior and a structured user prompt template.",
+          "status": "pending",
+          "verification": {
+            "command": "python -c 'from k8s_troubleshooting_agent.prompts import DIAGNOSIS_PROMPT; assert \"suggest\" in DIAGNOSIS_PROMPT'",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        },
+        {
+          "id": "step-2",
+          "index": 2,
+          "description": "Implement `agent.py` orchestrating data gathering, LLM invocation, and Markdown report formatting.",
+          "status": "pending",
+          "verification": {
+            "command": "python -c 'from k8s_troubleshooting_agent.agent import diagnose; print(diagnose.__doc__)'",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        },
+        {
+          "id": "step-3",
+          "index": 3,
+          "description": "Implement the main CLI flow in `cli.py` that accepts scenario/question and prints the Markdown report.",
+          "status": "pending",
+          "verification": {
+            "command": "python -m k8s_troubleshooting_agent.cli --provider ollama --model llama3.2:1b pods --dry-run 2>/dev/null | grep -q 'diagnosis\\|suggested'",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        },
+        {
+          "id": "step-4",
+          "index": 4,
+          "description": "Add `tests/test_agent.py` mocking kubectl and LLM to verify the full orchestration and output structure.",
+          "status": "pending",
+          "verification": {
+            "command": "pytest k8s_troubleshooting_agent/tests/test_agent.py",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        }
+      ]
+    },
+    {
+      "id": "phase-5",
+      "index": 5,
+      "name": "Documentation and test coverage",
+      "goal": "Complete README examples and ensure the full test suite passes.",
+      "description": "",
+      "parallel": false,
+      "status": "planned",
+      "steps": [
+        {
+          "id": "step-1",
+          "index": 1,
+          "description": "Finish `README.md` with provider env var setup, one example per scenario, and safety disclaimer.",
+          "status": "pending",
+          "verification": {
+            "command": "grep -q 'OPENAI_API_KEY' k8s_troubleshooting_agent/README.md && grep -q 'CrashLoopBackOff' k8s_troubleshooting_agent/README.md",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        },
+        {
+          "id": "step-2",
+          "index": 2,
+          "description": "Add `tests/test_cli.py` covering missing required args and happy-path invocation with mocks.",
+          "status": "pending",
+          "verification": {
+            "command": "pytest k8s_troubleshooting_agent/tests/test_cli.py",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        },
+        {
+          "id": "step-3",
+          "index": 3,
+          "description": "Run the complete test suite and verify installation works in editable mode.",
+          "status": "pending",
+          "verification": {
+            "command": "pip install -e . && pytest k8s_troubleshooting_agent/tests/",
+            "retries": 2,
+            "retryDelayMs": 1000
+          },
+          "parallel": false
+        }
+      ]
+    }
+  ],
+  "decisions": [],
+  "memories": [],
+  "createdAt": "2026-07-17T04:44:31.333Z",
+  "updatedAt": "2026-07-17T05:02:51.944Z",
+  "goal": "Build a Python CLI Kubernetes troubleshooting agent that uses LangChain to call a user-specified LLM, auto-gathers read-only cluster state via kubectl, and returns a Markdown diagnosis with suggested commands for pod, resource, networking, storage, and node issues.",
+  "successCriteria": [
+    "A new directory `k8s_troubleshooting_agent/` exists with a runnable CLI entry point.",
+    "The CLI requires `--provider` and `--model` and fails gracefully if either is missing.",
+    "The agent auto-runs read-only kubectl commands for each supported scenario and feeds output to the LLM.",
+    "The agent outputs a Markdown report with facts, diagnosis, suggested commands, and a safety note.",
+    "Unit tests mock kubectl and verify each scenario triggers the expected commands and structured prompts.",
+    "README documents installation, provider env vars, examples, and the read-only/suggest-only model.",
+    "Dependencies are declared in `pyproject.toml` including langchain, langchain-ollama, langchain-openai, and pytest."
+  ],
+  "constraints": [
+    "No destructive kubectl commands may be executed or suggested without explicit safety framing.",
+    "Provider and model must be explicitly provided by the user; no baked-in default LLM.",
+    "The agent must work against the user's current kubeconfig context and not require cluster-side installation.",
+    "Keep dependencies minimal: LangChain provider packages, subprocess kubectl, pytest."
+  ],
+  "lastActiveAt": "2026-07-17T05:01:47.903Z",
+  "activePhaseId": "phase-1"
+}
